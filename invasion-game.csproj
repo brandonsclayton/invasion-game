@@ -52,6 +52,7 @@
     <Compile Include="hud\HUD.cs" />
     <Compile Include="main\Main.cs" />
     <Compile Include="mob\Mob.cs" />
+    <Compile Include="player\Laser.cs" />
     <Compile Include="player\Player.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

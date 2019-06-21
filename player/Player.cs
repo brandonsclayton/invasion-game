@@ -11,51 +11,71 @@ public class Player : Area2D {
   [Signal]
   public delegate void Hit();
 
+  [Export]
+  public PackedScene Laser;
+
   /* The size of the game window */
   private Vector2 _screenSize;
 
+  public static readonly string FIRE = "fire";
+
+  private static readonly float _ROTATION_OFFSET = -Mathf.Deg2Rad(90);
+  private static readonly string _SPRITE = "Sprite";
+  private static readonly string _LASER = "Laster";
+  private static readonly string _COLLISION = "Collision";
+
   public override void _Ready() {
+    SetCollisionLayerBit(1, true);
+    SetCollisionMaskBit(3, true);
     _screenSize = GetViewport().GetSize();
     Connect("body_entered", this, nameof(OnPlayerBodyEntered));
     Hide();
   }
 
   public override void _Process(float delta) {
-    Vector2 velocity = movePlayer();
-    AnimatedSprite sprite = GetNode<AnimatedSprite>("AnimatedSprite");
+    Sprite sprite = GetNode<Sprite>(_SPRITE);
+    Vector2 velocity = movePlayer(sprite);
 
     if (velocity.Length() > 0) {
       velocity = velocity.Normalized() * Speed;
-      sprite.Play();
-    } else {
-      sprite.Stop();
     }
 
     updatePosition(velocity, delta);
-    updateAnimation(velocity, sprite);
+  }
+
+  public override void _Input(InputEvent inputEvent) {
+    if (inputEvent.IsActionPressed(FIRE)) {
+      OnFire();
+    }
+  }
+
+  private void OnFire() {
+    Sprite player = GetNode<Sprite>(_SPRITE);
+    float rotation = player.GetRotation();
+
+    RigidBody2D laser =(RigidBody2D)Laser.Instance();
+    AddChild(laser);
+    laser.SetPosition(player.GetPosition());
+    Vector2 playerBounds = player.GetRect().Size;
+    laser.Translate(new Vector2(
+        playerBounds.y * Mathf.Cos(rotation + _ROTATION_OFFSET),
+        playerBounds.y * Mathf.Sin(rotation + _ROTATION_OFFSET)));
+    laser.SetRotation(rotation);
+    Vector2 laserVelocity = new Vector2(800f, 0).Rotated(rotation + _ROTATION_OFFSET);
+    laser.SetLinearVelocity(laserVelocity);
   }
 
   public void Start(Vector2 pos) {
     Position = pos;
     Show();
-    GetNode<CollisionShape2D>("CollisionShape2D").Disabled = false;
+    GetNode<CollisionPolygon2D>(_COLLISION).Disabled = false;
   }
 
   public void OnPlayerBodyEntered(PhysicsBody2D body) {
+    System.Diagnostics.Debug.Print("On player body entered");
     Hide();
     EmitSignal("Hit");
-    GetNode<CollisionShape2D>("CollisionShape2D").SetDeferred("disabled", true);
-  }
-
-  private void updateAnimation(Vector2 velocity, AnimatedSprite sprite) {
-    if (velocity.x != 0) {
-      sprite.Animation = "right";
-      sprite.FlipH = velocity.x < 0;
-      sprite.FlipV = false;
-    } else if (velocity.y != 0) {
-      sprite.Animation = "up";
-      sprite.FlipV = velocity.y > 0;
-    }
+    GetNode<CollisionPolygon2D>(_COLLISION).SetDeferred("disabled", true);
   }
 
   private void updatePosition(Vector2 velocity, float delta) {
@@ -65,24 +85,35 @@ public class Player : Area2D {
       y: Mathf.Clamp(Position.y, 0, _screenSize.y));
   }
 
-  private Vector2 movePlayer() {
-    /* Players movement vector */
+  private Vector2 movePlayer(Sprite sprite) {
     Vector2 velocity = new Vector2();
+    Vector2 rotate = new Vector2();
 
     if (Input.IsActionPressed(Keys.Right)) {
+      rotate.x = 1;
       velocity.x += 1;
     }
 
     if (Input.IsActionPressed(Keys.Left)) {
+      rotate.x = -1;
       velocity.x -= 1;
     }
 
     if (Input.IsActionPressed(Keys.Down)) {
+      rotate.y = 1;
       velocity.y += 1;
     }
 
     if (Input.IsActionPressed(Keys.Up)) {
+      rotate.y = -1;
       velocity.y -= 1;
+    }
+
+    if (Input.IsActionPressed(Keys.Down) ||
+        Input.IsActionPressed(Keys.Left) ||
+        Input.IsActionPressed(Keys.Right) ||
+        Input.IsActionPressed(Keys.Up)) {
+      sprite.SetRotation(rotate.Angle() - _ROTATION_OFFSET);
     }
 
     return velocity;

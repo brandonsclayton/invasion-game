@@ -9,7 +9,7 @@
 
 [sub_resource type="Curve2D" id=1]
 _data = {
-"points": PoolVector2Array( 0, 0, 0, 0, 1.50006, 4.10007, 0, 0, 0, 0, 1284, 8.60007, 0, 0, 0, 0, 1286.25, 962.6, 0, 0, 0, 0, 6.00006, 964.85, 0, 0, 0, 0, 1.50006, 4.10007 )
+"points": PoolVector2Array( 0, 0, 0, 0, 78.5011, 66.0005, 0, 0, 0, 0, 1187.75, 75.0005, 0, 0, 0, 0, 1212.5, 914.702, 0, 0, 0, 0, 80.7511, 912.452, 0, 0, 0, 0, 83.0011, 70.9507 )
 }
 
 [node name="Main" type="Node"]
@@ -40,11 +40,15 @@ wait_time = 10.0
 position = Vector2( 640, 550 )
 
 [node name="MobPath" type="Path2D" parent="."]
+editor/display_folded = true
 curve = SubResource( 1 )
+__meta__ = {
+"_edit_group_": true
+}
 
 [node name="MobSpawnLocation" type="PathFollow2D" parent="MobPath"]
-position = Vector2( 1.50006, 4.10007 )
-rotation = 0.00350875
+position = Vector2( 78.5011, 66.0005 )
+rotation = 0.00811363
 
 [node name="HUD" parent="." instance=ExtResource( 4 )]
 

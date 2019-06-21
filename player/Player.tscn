@@ -1,40 +1,21 @@
-[gd_scene load_steps=8 format=2]
+[gd_scene load_steps=4 format=2]
 
 [ext_resource path="res://player/Player.cs" type="Script" id=1]
-[ext_resource path="res://assets/art/playerGrey_walk1.png" type="Texture" id=2]
-[ext_resource path="res://assets/art/playerGrey_walk2.png" type="Texture" id=3]
-[ext_resource path="res://assets/art/playerGrey_up1.png" type="Texture" id=4]
-[ext_resource path="res://assets/art/playerGrey_up2.png" type="Texture" id=5]
-
-
-[sub_resource type="SpriteFrames" id=1]
-animations = [ {
-"frames": [ ExtResource( 2 ), ExtResource( 3 ) ],
-"loop": true,
-"name": "right",
-"speed": 5.0
-}, {
-"frames": [ ExtResource( 4 ), ExtResource( 5 ) ],
-"loop": true,
-"name": "up",
-"speed": 5.0
-} ]
-
-[sub_resource type="CapsuleShape2D" id=2]
-radius = 25.5555
-height = 16.0001
+[ext_resource path="res://player/Laser.tscn" type="PackedScene" id=2]
+[ext_resource path="res://assets/art/player/player-ship-1-green.png" type="Texture" id=3]
 
 [node name="Player" type="Area2D"]
-position = Vector2( 0.148148, 1.03703 )
+position = Vector2( 0.14814, 0.592587 )
+collision_layer = 0
+collision_mask = 0
 script = ExtResource( 1 )
 __meta__ = {
 "_edit_group_": true
 }
+Laser = ExtResource( 2 )
 
-[node name="AnimatedSprite" type="AnimatedSprite" parent="."]
-scale = Vector2( 0.5, 0.5 )
-frames = SubResource( 1 )
-animation = "up"
+[node name="Sprite" type="Sprite" parent="."]
+texture = ExtResource( 3 )
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-shape = SubResource( 2 )
+[node name="Collision" type="CollisionPolygon2D" parent="."]
+polygon = PoolVector2Array( 8, -36.1, 18.2, -17.5, 19.5, -17.5, 44.5, -3.5, 49.5, -3.5, 55, -0.700001, 55, 1.5, 56, 13.2, 56, 15.5, 54.1, 15.5, 40.1, 37.5, 28.8, 37.5, 19, 35, -16.3, 37.5, -18, 37.5, -18, 35.9, -19.4, 35.3, -40.1, 37.5, -42, 37.5, -42, 35, -56, 15, -56, 0.5, -20, -16.8, -20, -17.6, -14, -21.6, -14, -23.9, -8, -36.9, -8, -37.5, 8, -37.5 )
