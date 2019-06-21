@@ -16,8 +16,17 @@ public class Mob : RigidBody2D {
   static private Random _random = new Random();
 
   public override void _Ready() {
+    SetContactMonitor(true);
+    SetMaxContactsReported(1);
+
+    SetCollisionMaskBit(1, false);
+    SetCollisionLayerBit(1, false);
+
+    SetCollisionLayerBit(3, true);
+    SetCollisionMaskBit(2, true);
     int next = _random.Next(0, _mobTypes.Length);
     GetNode<AnimatedSprite>("AnimatedSprite").Animation = _mobTypes[next];
+    Connect("body_entered", this, nameof(OnMobBodyEntered));
     GetNode<VisibilityNotifier2D>("Visibility").Connect(
         "screen_exited",
         this,
@@ -29,6 +38,11 @@ public class Mob : RigidBody2D {
   }
 
   public void OnStartGame() {
+    QueueFree();
+  }
+
+  void OnMobBodyEntered(PhysicsBody2D body) {
+    Hide();
     QueueFree();
   }
 

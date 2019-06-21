@@ -61,11 +61,10 @@ public class Main : Node {
   public void OnMobTimerTimeout() {
     /* Choose a random location on Path2D */
     PathFollow2D mobSpawnLocation = GetNode<PathFollow2D>("MobPath/MobSpawnLocation");
-    float a = _random.Next();
-    mobSpawnLocation.SetOffset(a);
+    mobSpawnLocation.SetOffset(_random.Next());
 
     /* Create a Mob instance and add it to the scene */
-    RigidBody2D mob = (RigidBody2D)Mob.Instance();
+    Mob mob = (Mob)Mob.Instance();
     AddChild(mob);
 
     /* Set mob's direction orthogonal to the path direction */
@@ -78,8 +77,10 @@ public class Main : Node {
     direction += RandRange(-Mathf.Pi / 4, Mathf.Pi / 4);
     mob.Rotation = direction;
 
-    /* Choose velocity */
-    mob.SetLinearVelocity(new Vector2(RandRange(150f, 250f), 0).Rotated(direction));
+    Vector2 mobVelocity = new Vector2(
+        RandRange(mob.MinSpeed, mob.MaxSpeed), 0).Rotated(direction);
+
+    mob.SetLinearVelocity(mobVelocity);
 
     GetNode<HUD>("HUD").Connect("StartGame", mob, "OnStartGame");
   }
