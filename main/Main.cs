@@ -7,41 +7,58 @@ public class Main : Node {
   public PackedScene Mob;
 
   private int _score;
-
+  private int _level;
   private Random _random = new Random();
-
   private float _waitTime = 0.5f;
-
   private float _difficultyModified = 1.25f;
 
+  private Player _player;
+  private GUI _gui;
+  private HUD _hud;
+
+  private static readonly float _DAMAGE = -15f;
+  private static readonly int _DESTROY_ENEMY_SCORE = 5;
+  private static readonly float _LEVEL_UP_HEALTH = 5f;
+  private static readonly int _LEVEL_UP = 1;
+
   public override void _Ready() {
-    GetNode<Player>("Player").Connect("Hit", this, nameof(GameOver));
+    _player = GetNode<Player>("Player");
+    _gui = GetNode<GUI>("GUI");
+    _hud = GetNode<HUD>("HUD");
+
+    _player.Connect("Hit", this, nameof(OnPlayerHit));
     GetNode<Timer>("StartTimer").Connect("timeout", this, nameof(OnStartTimerTimeout));
     GetNode<Timer>("MobTimer").Connect("timeout", this, nameof(OnMobTimerTimeout));
     GetNode<Timer>("ScoreTimer").Connect("timeout", this, nameof(OnScoreTimerTimeout));
     GetNode<Timer>("DifficultyTimer").Connect("timeout", this, nameof(OnDifficultyTimerTimeout));
-    GetNode<HUD>("HUD").Connect("StartGame", this, nameof(NewGame));
+    _hud.Connect("StartGame", this, nameof(NewGame));
   }
 
-  public void AddScore(int score) {
+  void AddScore(int score) {
     _score += score;
-    GetNode<HUD>("HUD").UpdateScore(_score);
+    _gui.UpdateScore(_score);
+  }
+
+  void AddLevel(int level) {
+    _level += level;
+    _gui.UpdateLevel(_level);
   }
 
   public void NewGame() {
     GetNode<Timer>("MobTimer").SetWaitTime(_waitTime);
-    GetNode<AudioStreamPlayer>("Music").Play();
+    // GetNode<AudioStreamPlayer>("Music").Play();
     _score = 0;
+    _level = 1;
 
-    Player player = GetNode<Player>("Player");
+    _gui.UpdateScore(_score);
+    _gui.UpdateLevel(_level);
+
     Position2D startposition = GetNode<Position2D>("StartPosition");
-    player.Start(startposition.Position);
+    _player.Start(startposition.Position);
 
     GetNode<Timer>("StartTimer").Start();
 
-    HUD hud = GetNode<HUD>("HUD");
-    hud.UpdateScore(_score);
-    hud.ShowMessage("Get Ready!");
+    _hud.ShowMessage("Get Ready!");
   }
 
   public void GameOver() {
@@ -49,18 +66,18 @@ public class Main : Node {
     GetNode<Timer>("MobTimer").Stop();
     GetNode<Timer>("ScoreTimer").Stop();
     GetNode<HUD>("HUD").ShowGameOver();
-    GetNode<AudioStreamPlayer>("DeathSound").Play();
+    // GetNode<AudioStreamPlayer>("DeathSound").Play();
   }
 
   public void OnStartTimerTimeout() {
     GetNode<Timer>("MobTimer").Start();
     GetNode<Timer>("ScoreTimer").Start();
     GetNode<Timer>("DifficultyTimer").Start();
+    _gui.NewGame();
   }
 
   public void OnScoreTimerTimeout() {
-    _score++;
-    GetNode<HUD>("HUD").UpdateScore(_score);
+    _gui.UpdateScore(++_score);
   }
 
   public void OnMobTimerTimeout() {
@@ -70,6 +87,7 @@ public class Main : Node {
 
     /* Create a Mob instance and add it to the scene */
     Mob mob = (Mob)Mob.Instance();
+    mob.Connect("MobDestroyed", this, nameof(EnemyDestroyed));
     AddChild(mob);
 
     /* Set mob's direction orthogonal to the path direction */
@@ -87,13 +105,28 @@ public class Main : Node {
 
     mob.SetLinearVelocity(mobVelocity);
 
-    GetNode<HUD>("HUD").Connect("StartGame", mob, "OnStartGame");
+    _hud.Connect("StartGame", mob, "OnStartGame");
   }
 
   public void OnDifficultyTimerTimeout() {
+    AddLevel(_LEVEL_UP);
+    _gui.LifeBarChange(_LEVEL_UP_HEALTH);
     Timer mobTimer = GetNode<Timer>("MobTimer");
     float timeOut = mobTimer.WaitTime;
     mobTimer.SetWaitTime(timeOut / _difficultyModified);
+  }
+
+  void EnemyDestroyed() {
+    AddScore(_DESTROY_ENEMY_SCORE);
+  }
+
+  void OnPlayerHit() {
+    _gui.LifeBarChange(_DAMAGE);
+
+    if (_gui.GetLifeBarValue() == _gui.MIN_LIFE_VALUE) {
+      _player.Destroy();
+      GameOver();
+    }
   }
 
   private float RandRange(float min, float max) {

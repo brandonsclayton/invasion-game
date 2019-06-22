@@ -17,6 +17,8 @@ public class Player : Area2D {
   /* The size of the game window */
   private Vector2 _screenSize;
 
+  private Sprite _playerSprite;
+
   public static readonly string FIRE = "fire";
 
   private static readonly float _ROTATION_OFFSET = -Mathf.Deg2Rad(90);
@@ -28,13 +30,13 @@ public class Player : Area2D {
     SetCollisionLayerBit(1, true);
     SetCollisionMaskBit(3, true);
     _screenSize = GetViewport().GetSize();
-    Connect("body_entered", this, nameof(OnPlayerBodyEntered));
+    Connect("body_entered", this, nameof(OnHit));
     Hide();
+    _playerSprite = GetNode<Sprite>(_SPRITE);
   }
 
   public override void _Process(float delta) {
-    Sprite sprite = GetNode<Sprite>(_SPRITE);
-    Vector2 velocity = movePlayer(sprite);
+    Vector2 velocity = movePlayer(_playerSprite);
 
     if (velocity.Length() > 0) {
       velocity = velocity.Normalized() * Speed;
@@ -50,13 +52,12 @@ public class Player : Area2D {
   }
 
   private void OnFire() {
-    Sprite player = GetNode<Sprite>(_SPRITE);
-    float rotation = player.GetRotation();
+    float rotation = _playerSprite.GetRotation();
 
     RigidBody2D laser =(RigidBody2D)Laser.Instance();
     AddChild(laser);
-    laser.SetPosition(player.GetPosition());
-    Vector2 playerBounds = player.GetRect().Size;
+    laser.SetPosition(_playerSprite.GetPosition());
+    Vector2 playerBounds = _playerSprite.GetRect().Size;
     laser.Translate(new Vector2(
         playerBounds.y * Mathf.Cos(rotation + _ROTATION_OFFSET),
         playerBounds.y * Mathf.Sin(rotation + _ROTATION_OFFSET)));
@@ -71,11 +72,17 @@ public class Player : Area2D {
     GetNode<CollisionPolygon2D>(_COLLISION).Disabled = false;
   }
 
-  public void OnPlayerBodyEntered(PhysicsBody2D body) {
-    System.Diagnostics.Debug.Print("On player body entered");
+  public void Destroy() {
     Hide();
-    EmitSignal("Hit");
     GetNode<CollisionPolygon2D>(_COLLISION).SetDeferred("disabled", true);
+  }
+
+  void OnHit(PhysicsBody2D body) {
+    EmitSignal("Hit");
+
+    if (body is Mob mob) {
+      mob.Destroy();
+    }
   }
 
   private void updatePosition(Vector2 velocity, float delta) {

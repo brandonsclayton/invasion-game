@@ -49,6 +49,7 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="gui\GUI.cs" />
     <Compile Include="hud\HUD.cs" />
     <Compile Include="main\Main.cs" />
     <Compile Include="mob\Mob.cs" />
