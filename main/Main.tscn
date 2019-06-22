@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=2]
+[gd_scene load_steps=9 format=2]
 
 [ext_resource path="res://main/Main.cs" type="Script" id=1]
 [ext_resource path="res://mob/Mob.tscn" type="PackedScene" id=2]
@@ -6,6 +6,7 @@
 [ext_resource path="res://hud/HUD.tscn" type="PackedScene" id=4]
 [ext_resource path="res://assets/art/House In a Forest Loop.ogg" type="AudioStream" id=5]
 [ext_resource path="res://assets/art/gameover.wav" type="AudioStream" id=6]
+[ext_resource path="res://gui/GUI.tscn" type="PackedScene" id=7]
 
 [sub_resource type="Curve2D" id=1]
 _data = {
@@ -47,8 +48,8 @@ __meta__ = {
 }
 
 [node name="MobSpawnLocation" type="PathFollow2D" parent="MobPath"]
-position = Vector2( 78.5011, 66.0005 )
-rotation = 0.00811363
+position = Vector2( -0.248962, -1.69925 )
+rotation = 0.00524477
 
 [node name="HUD" parent="." instance=ExtResource( 4 )]
 
@@ -57,3 +58,5 @@ stream = ExtResource( 5 )
 
 [node name="DeathSound" type="AudioStreamPlayer" parent="."]
 stream = ExtResource( 6 )
+
+[node name="GUI" parent="." instance=ExtResource( 7 )]
