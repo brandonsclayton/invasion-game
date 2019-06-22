@@ -87,43 +87,67 @@ public class Player : Area2D {
 
   private Vector2 movePlayer(Sprite sprite) {
     Vector2 velocity = new Vector2();
-    Vector2 rotate = new Vector2();
 
-    if (Input.IsActionPressed(Keys.Right)) {
-      rotate.x = 1;
+    if (Input.IsActionPressed(Keys.RIGHT)) {
       velocity.x += 1;
     }
 
-    if (Input.IsActionPressed(Keys.Left)) {
-      rotate.x = -1;
+    if (Input.IsActionPressed(Keys.LEFT)) {
       velocity.x -= 1;
     }
 
-    if (Input.IsActionPressed(Keys.Down)) {
-      rotate.y = 1;
+    if (Input.IsActionPressed(Keys.DOWN)) {
       velocity.y += 1;
     }
 
-    if (Input.IsActionPressed(Keys.Up)) {
-      rotate.y = -1;
+    if (Input.IsActionPressed(Keys.UP)) {
       velocity.y -= 1;
     }
 
-    if (Input.IsActionPressed(Keys.Down) ||
-        Input.IsActionPressed(Keys.Left) ||
-        Input.IsActionPressed(Keys.Right) ||
-        Input.IsActionPressed(Keys.Up)) {
-      sprite.SetRotation(rotate.Angle() - _ROTATION_OFFSET);
-    }
+    RotatePlayer(sprite);
 
     return velocity;
   }
 
+  void RotatePlayer(Sprite sprite) {
+    Vector2 rotate = new Vector2();
+
+    if (Input.IsActionPressed(Keys.ROTATE_RIGHT)) {
+      rotate.x = 1;
+    }
+
+    if (Input.IsActionPressed(Keys.ROTATE_LEFT)) {
+      rotate.x = -1;
+    }
+
+    if (Input.IsActionPressed(Keys.ROTATE_DOWN)) {
+      rotate.y = 1;
+    }
+
+    if (Input.IsActionPressed(Keys.ROTATE_UP)) {
+      rotate.y = -1;
+    }
+
+    if (Input.IsActionPressed(Keys.ROTATE_DOWN) ||
+        Input.IsActionPressed(Keys.ROTATE_LEFT) ||
+        Input.IsActionPressed(Keys.ROTATE_RIGHT) ||
+        Input.IsActionPressed(Keys.ROTATE_UP)) {
+      sprite.SetRotation(rotate.Angle() - _ROTATION_OFFSET);
+    }
+
+
+  }
+
   static class Keys {
-    public static readonly string Up = "ui_up";
-    public static readonly string Down = "ui_down";
-    public static readonly string Right = "ui_right";
-    public static readonly string Left = "ui_left";
+    public static readonly string UP = "ui_up";
+    public static readonly string DOWN = "ui_down";
+    public static readonly string RIGHT = "ui_right";
+    public static readonly string LEFT = "ui_left";
+
+    public static readonly string ROTATE_UP = "rotate_up";
+    public static readonly string ROTATE_DOWN = "rotate_down";
+    public static readonly string ROTATE_RIGHT = "rotate_right";
+    public static readonly string ROTATE_LEFT = "rotate_left";
   }
 
 }

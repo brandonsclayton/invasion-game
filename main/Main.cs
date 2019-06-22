@@ -23,6 +23,11 @@ public class Main : Node {
     GetNode<HUD>("HUD").Connect("StartGame", this, nameof(NewGame));
   }
 
+  public void AddScore(int score) {
+    _score += score;
+    GetNode<HUD>("HUD").UpdateScore(_score);
+  }
+
   public void NewGame() {
     GetNode<Timer>("MobTimer").SetWaitTime(_waitTime);
     GetNode<AudioStreamPlayer>("Music").Play();
