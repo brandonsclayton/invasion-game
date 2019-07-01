@@ -1,7 +1,7 @@
 using Godot;
 using System;
 
-public class Mob : RigidBody2D {
+public class Enemy : RigidBody2D {
 
   /* Min speed */
   [Export]
@@ -12,9 +12,9 @@ public class Mob : RigidBody2D {
   public int MaxSpeed = 250;
 
   [Signal]
-  public delegate void MobDestroyed();
+  public delegate void EnemyDestroyed();
 
-  private String[] _mobTypes = { "walk", "swim", "fly" };
+  private String[] _enemyTypes = { "walk", "swim", "fly" };
 
   static private Random _random = new Random();
 
@@ -27,9 +27,9 @@ public class Mob : RigidBody2D {
 
     SetCollisionLayerBit(3, true);
     SetCollisionMaskBit(2, true);
-    int next = _random.Next(0, _mobTypes.Length);
-    GetNode<AnimatedSprite>("AnimatedSprite").Animation = _mobTypes[next];
-    Connect("body_entered", this, nameof(OnMobBodyEntered));
+    int next = _random.Next(0, _enemyTypes.Length);
+    GetNode<AnimatedSprite>("AnimatedSprite").Animation = _enemyTypes[next];
+    Connect("body_entered", this, nameof(OnEnemyBodyEntered));
     GetNode<VisibilityNotifier2D>("Visibility").Connect(
         "screen_exited",
         this,
@@ -50,11 +50,11 @@ public class Mob : RigidBody2D {
     QueueFree();
   }
 
-  void OnMobBodyEntered(PhysicsBody2D body) {
+  void OnEnemyBodyEntered(PhysicsBody2D body) {
     Destroy();
 
     if (body is Laser) {
-      EmitSignal(nameof(MobDestroyed));
+      EmitSignal(nameof(EnemyDestroyed));
     }
   }
 

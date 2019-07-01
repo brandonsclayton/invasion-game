@@ -1,10 +1,10 @@
 [gd_scene load_steps=9 format=2]
 
 [ext_resource path="res://main/Main.cs" type="Script" id=1]
-[ext_resource path="res://mob/Mob.tscn" type="PackedScene" id=2]
+[ext_resource path="res://enemy/Enemy.tscn" type="PackedScene" id=2]
 [ext_resource path="res://player/Player.tscn" type="PackedScene" id=3]
-[ext_resource path="res://assets/art/House In a Forest Loop.ogg" type="AudioStream" id=4]
-[ext_resource path="res://assets/art/gameover.wav" type="AudioStream" id=5]
+[ext_resource path="res://assets/sound/game-music.ogg" type="AudioStream" id=4]
+[ext_resource path="res://assets/sound/gameover.wav" type="AudioStream" id=5]
 [ext_resource path="res://hud/HUD.tscn" type="PackedScene" id=6]
 [ext_resource path="res://gui/GUI.tscn" type="PackedScene" id=7]
 
@@ -15,7 +15,7 @@ _data = {
 
 [node name="Main" type="Node"]
 script = ExtResource( 1 )
-Mob = ExtResource( 2 )
+Enemy = ExtResource( 2 )
 Player = ExtResource( 3 )
 
 [node name="ColorRect" type="ColorRect" parent="."]
@@ -24,7 +24,7 @@ margin_right = 1284.0
 margin_bottom = 966.75
 color = Color( 0.203922, 0.372549, 0.937255, 1 )
 
-[node name="MobTimer" type="Timer" parent="."]
+[node name="EnemyTimer" type="Timer" parent="."]
 wait_time = 0.5
 
 [node name="ScoreTimer" type="Timer" parent="."]
@@ -36,14 +36,13 @@ one_shot = true
 [node name="DifficultyTimer" type="Timer" parent="."]
 wait_time = 10.0
 
-[node name="MobPath" type="Path2D" parent="."]
-editor/display_folded = true
+[node name="EnemyPath" type="Path2D" parent="."]
 curve = SubResource( 1 )
 __meta__ = {
 "_edit_group_": true
 }
 
-[node name="MobSpawnLocation" type="PathFollow2D" parent="MobPath"]
+[node name="EnemySpawnLocation" type="PathFollow2D" parent="EnemyPath"]
 position = Vector2( -0.248962, -1.69925 )
 rotation = 0.00524477
 

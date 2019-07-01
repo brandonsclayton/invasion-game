@@ -6,7 +6,7 @@
 [ext_resource path="res://gui/2PlayerButton.tscn" type="PackedScene" id=4]
 [ext_resource path="res://player/PlayerShipGreen.tscn" type="PackedScene" id=5]
 [ext_resource path="res://player/Laser.tscn" type="PackedScene" id=6]
-[ext_resource path="res://mob/Mob.tscn" type="PackedScene" id=7]
+[ext_resource path="res://enemy/Enemy.tscn" type="PackedScene" id=7]
 [ext_resource path="res://assets/fonts/Comfortaa-Bold.ttf" type="DynamicFontData" id=8]
 
 [sub_resource type="DynamicFont" id=1]
@@ -88,7 +88,6 @@ focus_previous = NodePath("../1PlayerButton")
 custom_styles/focus = SubResource( 2 )
 
 [node name="MarginContainer" type="MarginContainer" parent="StartScreen"]
-editor/display_folded = true
 margin_left = 454.0
 margin_right = 1080.0
 margin_bottom = 760.0
@@ -103,15 +102,15 @@ rotation = 0.785398
 position = Vector2( 246, 387 )
 rotation = 0.785398
 
-[node name="Mob2" parent="StartScreen/MarginContainer" instance=ExtResource( 7 )]
+[node name="Enemy1" parent="StartScreen/MarginContainer" instance=ExtResource( 7 )]
 position = Vector2( 477, 247.5 )
 rotation = 2.61799
 
-[node name="Mob" parent="StartScreen/MarginContainer" instance=ExtResource( 7 )]
+[node name="Enemy2" parent="StartScreen/MarginContainer" instance=ExtResource( 7 )]
 position = Vector2( 306, 276.75 )
 rotation = 2.0944
 
-[node name="Mob3" parent="StartScreen/MarginContainer" instance=ExtResource( 7 )]
+[node name="Enemy3" parent="StartScreen/MarginContainer" instance=ExtResource( 7 )]
 position = Vector2( 391.5, 389.25 )
 rotation = -3.14159
 
