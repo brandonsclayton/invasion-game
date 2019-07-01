@@ -1,10 +1,14 @@
 using Godot;
 using System;
+using System.Collections.Generic;
 
 public class Main : Node {
 
   [Export]
   public PackedScene Mob;
+
+  [Export]
+  public PackedScene Player;
 
   private int _score;
   private int _level;
@@ -12,75 +16,115 @@ public class Main : Node {
   private float _waitTime = 0.5f;
   private float _difficultyModified = 1.25f;
 
-  private Player _player;
+  /* Nodes */
   private GUI _gui;
   private HUD _hud;
+  private List<Player> _players = new List<Player>();
+  private Timer _startTimer;
+  private Timer _mobTimer;
+  private Timer _scoreTimer;
+  private Timer _difficultyTimer;
+  private Position2D _player1StartPosition;
+  private Position2D _player2StartPosition;
+  private Position2D _singlePlayerStartPosition;
+  private AudioStreamPlayer _gamePlayAudio;
+  private AudioStreamPlayer _gameOverAudio;
 
-  private static readonly float _DAMAGE = -15f;
+  private static readonly float _DAMAGE = -10f;
   private static readonly int _DESTROY_ENEMY_SCORE = 5;
-  private static readonly float _LEVEL_UP_HEALTH = 5f;
+  private static readonly float _LEVEL_UP_HEALTH = 10f;
   private static readonly int _LEVEL_UP = 1;
 
   public override void _Ready() {
-    _player = GetNode<Player>("Player");
     _gui = GetNode<GUI>("GUI");
     _hud = GetNode<HUD>("HUD");
+    _startTimer = GetNode<Timer>("StartTimer");
+    _mobTimer = GetNode<Timer>("MobTimer");
+    _scoreTimer = GetNode<Timer>("ScoreTimer");
+    _difficultyTimer = GetNode<Timer>("DifficultyTimer");
+    _singlePlayerStartPosition = GetNode<Position2D>("StartPositions/SinglePlayerStart");
+    _player1StartPosition = GetNode<Position2D>("StartPositions/Player1Start");
+    _player2StartPosition = GetNode<Position2D>("StartPositions/Player2Start");
+    _gamePlayAudio = GetNode<AudioStreamPlayer>("Music");
+    _gameOverAudio = GetNode<AudioStreamPlayer>("DeathSound");
 
-    _player.Connect("Hit", this, nameof(OnPlayerHit));
-    GetNode<Timer>("StartTimer").Connect("timeout", this, nameof(OnStartTimerTimeout));
-    GetNode<Timer>("MobTimer").Connect("timeout", this, nameof(OnMobTimerTimeout));
-    GetNode<Timer>("ScoreTimer").Connect("timeout", this, nameof(OnScoreTimerTimeout));
-    GetNode<Timer>("DifficultyTimer").Connect("timeout", this, nameof(OnDifficultyTimerTimeout));
-    _hud.Connect("StartGame", this, nameof(NewGame));
+    _startTimer.Connect("timeout", this, nameof(OnStartTimerTimeout));
+    _mobTimer.Connect("timeout", this, nameof(OnMobTimerTimeout));
+    _scoreTimer.Connect("timeout", this, nameof(OnScoreTimerTimeout));
+    _difficultyTimer.Connect("timeout", this, nameof(OnDifficultyTimerTimeout));
+
+    _gui.Connect("StartGame", this, nameof(NewGame));
   }
 
   void AddScore(int score) {
     _score += score;
-    _gui.UpdateScore(_score);
+    _hud.UpdateScore(_score);
   }
 
   void AddLevel(int level) {
     _level += level;
-    _gui.UpdateLevel(_level);
+    _hud.UpdateLevel(_level);
   }
 
-  public void NewGame() {
-    GetNode<Timer>("MobTimer").SetWaitTime(_waitTime);
-    // GetNode<AudioStreamPlayer>("Music").Play();
+  void NewGame() {
+    _hud.NewGame();
+    Options options = _gui.GetOptions();
+
+    for (int index = 0; index < options.numberOfPlayers; index++) {
+      Player player = (Player)Player.Instance();
+      player.SetPlayer(options.playerOptions[index]);
+      AddChild(player);
+      _players.Add(player);
+      player.Connect(
+          "Hit",
+          this,
+          nameof(OnPlayerHit),
+          new Godot.Collections.Array() {player});
+    }
+
+    if (options.numberOfPlayers == 1) {
+      _players[0].Start(_singlePlayerStartPosition.GetPosition());
+    }
+
+    if (options.numberOfPlayers == 2) {
+      _players[0].Start(_player1StartPosition.GetPosition());
+      _players[1].Start(_player2StartPosition.GetPosition());
+    }
+
+    _mobTimer.SetWaitTime(_waitTime);
+    _gamePlayAudio.Play();
     _score = 0;
     _level = 1;
 
-    _gui.UpdateScore(_score);
-    _gui.UpdateLevel(_level);
-
-    Position2D startposition = GetNode<Position2D>("StartPosition");
-    _player.Start(startposition.Position);
-
-    GetNode<Timer>("StartTimer").Start();
-
-    _hud.ShowMessage("Get Ready!");
+    _hud.UpdateScore(_score);
+    _hud.UpdateLevel(_level);
+    _startTimer.Start();
+    _gui.ShowMessage("Get Ready!");
   }
 
-  public void GameOver() {
-    GetNode<AudioStreamPlayer>("Music").Stop();
-    GetNode<Timer>("MobTimer").Stop();
-    GetNode<Timer>("ScoreTimer").Stop();
-    GetNode<HUD>("HUD").ShowGameOver();
-    // GetNode<AudioStreamPlayer>("DeathSound").Play();
+  void GameOver() {
+    foreach (Player player in _players) {
+      player.Hide();
+    }
+
+    _gamePlayAudio.Stop();
+    _mobTimer.Stop();
+    _scoreTimer.Stop();
+    _gui.ShowGameOver();
+    _gameOverAudio.Play();
   }
 
-  public void OnStartTimerTimeout() {
-    GetNode<Timer>("MobTimer").Start();
-    GetNode<Timer>("ScoreTimer").Start();
-    GetNode<Timer>("DifficultyTimer").Start();
-    _gui.NewGame();
+  void OnStartTimerTimeout() {
+    _mobTimer.Start();
+    _scoreTimer.Start();
+    _difficultyTimer.Start();
   }
 
-  public void OnScoreTimerTimeout() {
-    _gui.UpdateScore(++_score);
+  void OnScoreTimerTimeout() {
+    _hud.UpdateScore(++_score);
   }
 
-  public void OnMobTimerTimeout() {
+  void OnMobTimerTimeout() {
     /* Choose a random location on Path2D */
     PathFollow2D mobSpawnLocation = GetNode<PathFollow2D>("MobPath/MobSpawnLocation");
     mobSpawnLocation.SetOffset(_random.Next());
@@ -105,26 +149,25 @@ public class Main : Node {
 
     mob.SetLinearVelocity(mobVelocity);
 
-    _hud.Connect("StartGame", mob, "OnStartGame");
+    _gui.Connect("StartGame", mob, "OnStartGame");
   }
 
-  public void OnDifficultyTimerTimeout() {
+  void OnDifficultyTimerTimeout() {
     AddLevel(_LEVEL_UP);
-    _gui.LifeBarChange(_LEVEL_UP_HEALTH);
-    Timer mobTimer = GetNode<Timer>("MobTimer");
-    float timeOut = mobTimer.WaitTime;
-    mobTimer.SetWaitTime(timeOut / _difficultyModified);
+    _hud.LifeBarChange(_LEVEL_UP_HEALTH);
+    float timeOut = _mobTimer.WaitTime;
+    _mobTimer.SetWaitTime(timeOut / _difficultyModified);
   }
 
   void EnemyDestroyed() {
     AddScore(_DESTROY_ENEMY_SCORE);
   }
 
-  void OnPlayerHit() {
-    _gui.LifeBarChange(_DAMAGE);
+  void OnPlayerHit(Player player) {
+    _hud.LifeBarChange(_DAMAGE);
 
-    if (_gui.GetLifeBarValue() == _gui.MIN_LIFE_VALUE) {
-      _player.Destroy();
+    if (_hud.GetLifeBarValue() == _hud.MIN_LIFE_VALUE) {
+      player.Destroy();
       GameOver();
     }
   }

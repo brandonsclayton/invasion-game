@@ -1,51 +1,35 @@
-[gd_scene load_steps=7 format=2]
+[gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://hud/HUD.cs" type="Script" id=1]
-[ext_resource path="res://assets/fonts/Xolonium-Regular.ttf" type="DynamicFontData" id=2]
+[ext_resource path="res://hud/LifeBar.tscn" type="PackedScene" id=2]
+[ext_resource path="res://hud/Level.tscn" type="PackedScene" id=3]
+[ext_resource path="res://hud/Score.tscn" type="PackedScene" id=4]
 
-[sub_resource type="DynamicFont" id=1]
-size = 64
-font_data = ExtResource( 2 )
-
-[sub_resource type="DynamicFont" id=2]
-size = 64
-font_data = ExtResource( 2 )
-
-[sub_resource type="InputEventAction" id=3]
-action = "ui_select"
-
-[sub_resource type="ShortCut" id=4]
-shortcut = SubResource( 3 )
-
-[node name="HUD" type="CanvasLayer"]
+[node name="HUD" type="MarginContainer"]
+anchor_right = 1.0
+margin_left = 20.0
+margin_top = 20.0
+margin_right = -20.0
+margin_bottom = 53.0
 script = ExtResource( 1 )
 
-[node name="MessageLabel" type="Label" parent="."]
-anchor_top = 0.5
-anchor_right = 1.0
-anchor_bottom = 0.5
-margin_left = 1.5
-margin_top = -79.5
-margin_right = 1.5
-margin_bottom = 79.5
-custom_fonts/font = SubResource( 1 )
-text = "The Invasion!"
-align = 1
-autowrap = true
+[node name="LifeBar" parent="." instance=ExtResource( 2 )]
+margin_top = 15.0
+margin_right = 1240.0
+margin_bottom = 68.0
+size_flags_vertical = 4
 
-[node name="StartButton" type="Button" parent="."]
-anchor_left = 0.5
-anchor_top = 1.0
-anchor_right = 0.5
-anchor_bottom = 1.0
-margin_left = -90.0
-margin_top = -200.0
-margin_right = 90.0
-margin_bottom = -100.0
-custom_fonts/font = SubResource( 2 )
-shortcut = SubResource( 4 )
-text = "Start"
+[node name="Counters" type="VBoxContainer" parent="."]
+margin_left = 1100.0
+margin_right = 1240.0
+margin_bottom = 84.0
+size_flags_horizontal = 8
+custom_constants/separation = 4
 
-[node name="MessageTimer" type="Timer" parent="."]
-wait_time = 2.0
-one_shot = true
+[node name="Level" parent="Counters" instance=ExtResource( 3 )]
+margin_right = 140.0
+
+[node name="Score" parent="Counters" instance=ExtResource( 4 )]
+margin_top = 44.0
+margin_right = 140.0
+margin_bottom = 84.0

@@ -1,43 +1,55 @@
 using Godot;
 using System;
 
-public class HUD: CanvasLayer {
+public class HUD: MarginContainer {
 
-  [Signal]
-  public delegate void StartGame();
+  [Export]
+  public float MIN_LIFE_VALUE;
+
+  [Export]
+  public float MAX_LIFE_VALUE;
+
+  private TextureProgress _lifeBarGauge;
+  private Label _lifeBarValue;
+  private Label _score;
+  private Label _level;
 
   public override void _Ready() {
-    GetNode<Timer>("MessageTimer").Connect("timeout", this, nameof(OnMessageTimer));
-    GetNode<Button>("StartButton").Connect("pressed", this, nameof(OnStartButtonPressed));
+    Hide();
+    _lifeBarGauge = GetNode<TextureProgress>("LifeBar/Gauge");
+    _lifeBarValue = GetNode<Label>("LifeBar/Count/Background/Number");
+    _score = GetNode<Label>("Counters/Score/Background/Number");
+    _level = GetNode<Label>("Counters/Level/Background/Number");
+
+    MIN_LIFE_VALUE = _lifeBarGauge.MinValue;
+    MAX_LIFE_VALUE = _lifeBarGauge.MaxValue;
+    _lifeBarGauge.Connect("value_changed", this, nameof(OnLifeBarValueChanged));
+    _lifeBarGauge.SetValue(MAX_LIFE_VALUE);
   }
 
-  public void ShowMessage(string text) {
-    Label messageLabel = GetNode<Label>("MessageLabel");
-    messageLabel.Text = text;
-    messageLabel.Show();
-
-    GetNode<Timer>("MessageTimer").Start();
+  public void NewGame() {
+    _lifeBarGauge.SetValue(MAX_LIFE_VALUE);
+    Show();
   }
 
-  async public void ShowGameOver() {
-    ShowMessage("Game Over");
-    Timer messageTimer = GetNode<Timer>("MessageTimer");
-    await ToSignal(messageTimer, "timeout");
-
-    Label messageLabel = GetNode<Label>("MessageLabel");
-    messageLabel.Text = "Dodge the\nCreeps!";
-    messageLabel.Show();
-
-    GetNode<Button>("StartButton").Show();
+  public void UpdateScore(int score) {
+    _score.SetText(score.ToString());
   }
 
-  public void OnStartButtonPressed() {
-    GetNode<Button>("StartButton").Hide();
-    EmitSignal("StartGame");
+  public void UpdateLevel(int level) {
+    _level.SetText(level.ToString());
   }
 
-  public void OnMessageTimer() {
-    GetNode<Label>("MessageLabel").Hide();
+  public void LifeBarChange(float value) {
+    _lifeBarGauge.SetValue(GetLifeBarValue() + value);
+  }
+
+  public float GetLifeBarValue() {
+    return _lifeBarGauge.GetValue();
+  }
+
+  void OnLifeBarValueChanged(float value) {
+    _lifeBarValue.SetText(value.ToString());
   }
 
 }
