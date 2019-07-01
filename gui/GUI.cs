@@ -3,53 +3,69 @@ using System;
 
 public class GUI: MarginContainer {
 
-  [Export]
-  public float MIN_LIFE_VALUE;
+  [Signal]
+  public delegate void StartGame();
 
-  [Export]
-  public float MAX_LIFE_VALUE;
+  private Options.Builder _options = Options.GetBuilder();
 
-  private TextureProgress _lifeBarGauge;
-  private Label _lifeBarValue;
-  private Label _score;
-  private Label _level;
+  private HBoxContainer _startScreen;
+  private Label _messageLabel;
+  private Button _1PlayerButton;
+  private Button _2PlayerButton;
 
   public override void _Ready() {
-    Hide();
-    _lifeBarGauge = GetNode<TextureProgress>("LifeBar/Gauge");
-    _lifeBarValue = GetNode<Label>("LifeBar/Count/Background/Number");
-    _score = GetNode<Label>("Counters/Score/Background/Number");
-    _level = GetNode<Label>("Counters/Level/Background/Number");
+    _startScreen = GetNode<HBoxContainer>("StartScreen");
+    _1PlayerButton = GetNode<Button>("StartScreen/VBoxContainer/PlayerOptions/1PlayerButton");
+    _2PlayerButton = GetNode<Button>("StartScreen/VBoxContainer/PlayerOptions/2PlayerButton");
 
-    MIN_LIFE_VALUE = _lifeBarGauge.MinValue;
-    MAX_LIFE_VALUE = _lifeBarGauge.MaxValue;
-    _lifeBarGauge.Connect("value_changed", this, nameof(OnLifeBarValueChanged));
-    _lifeBarGauge.SetValue(MAX_LIFE_VALUE);
+    _1PlayerButton.GrabFocus();
+    _messageLabel = GetNode<Label>("MessageLabelContainer/MessageLabel");
+    _messageLabel.Hide();
+
+    System.Diagnostics.Debug.Print(_1PlayerButton.ToString());
+    _1PlayerButton.Connect(
+        "pressed",
+        this,
+        nameof(OnStartButtonPressed),
+        new Godot.Collections.Array() {1});
+
+    _2PlayerButton.Connect(
+        "pressed",
+        this,
+        nameof(OnStartButtonPressed),
+        new Godot.Collections.Array() {2});
+
+    GetNode<Timer>("MessageTimer").Connect("timeout", this, nameof(OnMessageTimer));
   }
 
-  public void NewGame() {
-    _lifeBarGauge.SetValue(MAX_LIFE_VALUE);
-    Show();
+  public void ShowMessage(string text) {
+    _messageLabel.SetText(text);
+    _messageLabel.Show();
+
+    GetNode<Timer>("MessageTimer").Start();
   }
 
-  public void UpdateScore(int score) {
-    _score.SetText(score.ToString());
+  async public void ShowGameOver() {
+    ShowMessage("Game Over");
+    Timer messageTimer = GetNode<Timer>("MessageTimer");
+    await ToSignal(messageTimer, "timeout");
+    _startScreen.Show();
+    _1PlayerButton.GrabFocus();
   }
 
-  public void UpdateLevel(int level) {
-    _level.SetText(level.ToString());
+  public void OnStartButtonPressed(int numberOfPlayers) {
+    _options.SetNumberOfPlayers(numberOfPlayers);
+    _startScreen.Hide();
+    EmitSignal("StartGame");
   }
 
-  public void LifeBarChange(float value) {
-    _lifeBarGauge.SetValue(GetLifeBarValue() + value);
+  public void OnMessageTimer() {
+    _messageLabel.Hide();
+    _startScreen.Hide();
   }
 
-  public float GetLifeBarValue() {
-    return _lifeBarGauge.GetValue();
-  }
-
-  void OnLifeBarValueChanged(float value) {
-    _lifeBarValue.SetText(value.ToString());
+  public Options GetOptions() {
+    return _options.Build();
   }
 
 }

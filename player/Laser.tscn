@@ -1,7 +1,8 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=4 format=2]
 
 [ext_resource path="res://player/Laser.cs" type="Script" id=1]
 [ext_resource path="res://assets/art/player/laser-red.png" type="Texture" id=2]
+[ext_resource path="res://assets/sound/sfx-laser1.wav" type="AudioStream" id=3]
 
 [node name="Laser" type="RigidBody2D"]
 position = Vector2( -1.5, 0 )
@@ -14,3 +15,6 @@ texture = ExtResource( 2 )
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
 polygon = PoolVector2Array( 4.5, 27, -4.5, 27, -4.5, -27, 4.5, -27 )
+
+[node name="SFXLaser1" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 3 )

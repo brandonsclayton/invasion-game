@@ -50,6 +50,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="gui\GUI.cs" />
+    <Compile Include="options\Options.cs" />
+    <Compile Include="options\PlayerOptions.cs" />
     <Compile Include="hud\HUD.cs" />
     <Compile Include="main\Main.cs" />
     <Compile Include="mob\Mob.cs" />
