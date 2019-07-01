@@ -12,3 +12,5 @@ Laser = ExtResource( 2 )
 [node name="PlayerShipGreen" parent="." instance=ExtResource( 3 )]
 
 [node name="PlayerShipBlue" parent="." instance=ExtResource( 4 )]
+
+[node name="LaserTimer" type="Timer" parent="."]
