@@ -22,7 +22,6 @@ public class GUI: MarginContainer {
     _messageLabel = GetNode<Label>("MessageLabelContainer/MessageLabel");
     _messageLabel.Hide();
 
-    System.Diagnostics.Debug.Print(_1PlayerButton.ToString());
     _1PlayerButton.Connect(
         "pressed",
         this,

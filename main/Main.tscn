@@ -37,6 +37,7 @@ one_shot = true
 wait_time = 10.0
 
 [node name="EnemyPath" type="Path2D" parent="."]
+editor/display_folded = true
 curve = SubResource( 1 )
 __meta__ = {
 "_edit_group_": true
@@ -48,6 +49,7 @@ rotation = 0.00524477
 
 [node name="Music" type="AudioStreamPlayer" parent="."]
 stream = ExtResource( 4 )
+volume_db = -4.0
 
 [node name="DeathSound" type="AudioStreamPlayer" parent="."]
 stream = ExtResource( 5 )
