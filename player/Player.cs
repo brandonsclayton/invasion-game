@@ -98,8 +98,8 @@ public class Player : Node2D {
   void OnHit(PhysicsBody2D body) {
     EmitSignal("Hit");
 
-    if (body is Mob mob) {
-      mob.Destroy();
+    if (body is Enemy enemy) {
+      enemy.Destroy();
     }
   }
 

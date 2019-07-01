@@ -5,7 +5,7 @@ using System.Collections.Generic;
 public class Main : Node {
 
   [Export]
-  public PackedScene Mob;
+  public PackedScene Enemy;
 
   [Export]
   public PackedScene Player;
@@ -21,7 +21,7 @@ public class Main : Node {
   private HUD _hud;
   private List<Player> _players = new List<Player>();
   private Timer _startTimer;
-  private Timer _mobTimer;
+  private Timer _enemyTimer;
   private Timer _scoreTimer;
   private Timer _difficultyTimer;
   private Position2D _player1StartPosition;
@@ -39,7 +39,7 @@ public class Main : Node {
     _gui = GetNode<GUI>("GUI");
     _hud = GetNode<HUD>("HUD");
     _startTimer = GetNode<Timer>("StartTimer");
-    _mobTimer = GetNode<Timer>("MobTimer");
+    _enemyTimer = GetNode<Timer>("EnemyTimer");
     _scoreTimer = GetNode<Timer>("ScoreTimer");
     _difficultyTimer = GetNode<Timer>("DifficultyTimer");
     _singlePlayerStartPosition = GetNode<Position2D>("StartPositions/SinglePlayerStart");
@@ -49,7 +49,7 @@ public class Main : Node {
     _gameOverAudio = GetNode<AudioStreamPlayer>("DeathSound");
 
     _startTimer.Connect("timeout", this, nameof(OnStartTimerTimeout));
-    _mobTimer.Connect("timeout", this, nameof(OnMobTimerTimeout));
+    _enemyTimer.Connect("timeout", this, nameof(OnEnemyTimerTimeout));
     _scoreTimer.Connect("timeout", this, nameof(OnScoreTimerTimeout));
     _difficultyTimer.Connect("timeout", this, nameof(OnDifficultyTimerTimeout));
 
@@ -91,7 +91,7 @@ public class Main : Node {
       _players[1].Start(_player2StartPosition.GetPosition());
     }
 
-    _mobTimer.SetWaitTime(_waitTime);
+    _enemyTimer.SetWaitTime(_waitTime);
     _gamePlayAudio.Play();
     _score = 0;
     _level = 1;
@@ -108,14 +108,14 @@ public class Main : Node {
     }
 
     _gamePlayAudio.Stop();
-    _mobTimer.Stop();
+    _enemyTimer.Stop();
     _scoreTimer.Stop();
     _gui.ShowGameOver();
     _gameOverAudio.Play();
   }
 
   void OnStartTimerTimeout() {
-    _mobTimer.Start();
+    _enemyTimer.Start();
     _scoreTimer.Start();
     _difficultyTimer.Start();
   }
@@ -124,39 +124,39 @@ public class Main : Node {
     _hud.UpdateScore(++_score);
   }
 
-  void OnMobTimerTimeout() {
+  void OnEnemyTimerTimeout() {
     /* Choose a random location on Path2D */
-    PathFollow2D mobSpawnLocation = GetNode<PathFollow2D>("MobPath/MobSpawnLocation");
-    mobSpawnLocation.SetOffset(_random.Next());
+    PathFollow2D enemySpawnLocation = GetNode<PathFollow2D>("EnemyPath/EnemySpawnLocation");
+    enemySpawnLocation.SetOffset(_random.Next());
 
-    /* Create a Mob instance and add it to the scene */
-    Mob mob = (Mob)Mob.Instance();
-    mob.Connect("MobDestroyed", this, nameof(EnemyDestroyed));
-    AddChild(mob);
+    /* Create a Enemy instance and add it to the scene */
+    Enemy enemy = (Enemy)Enemy.Instance();
+    enemy.Connect("EnemyDestroyed", this, nameof(EnemyDestroyed));
+    AddChild(enemy);
 
-    /* Set mob's direction orthogonal to the path direction */
-    float direction = mobSpawnLocation.Rotation + Mathf.Pi / 2;
+    /* Set enemy's direction orthogonal to the path direction */
+    float direction = enemySpawnLocation.Rotation + Mathf.Pi / 2;
 
-    /* Set the mob's position to a random location */
-    mob.Position = mobSpawnLocation.Position;
+    /* Set the enemy's position to a random location */
+    enemy.Position = enemySpawnLocation.Position;
 
     /* Add some randomness to the direction */
     direction += RandRange(-Mathf.Pi / 4, Mathf.Pi / 4);
-    mob.Rotation = direction;
+    enemy.Rotation = direction;
 
-    Vector2 mobVelocity = new Vector2(
-        RandRange(mob.MinSpeed, mob.MaxSpeed), 0).Rotated(direction);
+    Vector2 enemyVelocity = new Vector2(
+        RandRange(enemy.MinSpeed, enemy.MaxSpeed), 0).Rotated(direction);
 
-    mob.SetLinearVelocity(mobVelocity);
+    enemy.SetLinearVelocity(enemyVelocity);
 
-    _gui.Connect("StartGame", mob, "OnStartGame");
+    _gui.Connect("StartGame", enemy, "OnStartGame");
   }
 
   void OnDifficultyTimerTimeout() {
     AddLevel(_LEVEL_UP);
     _hud.LifeBarChange(_LEVEL_UP_HEALTH);
-    float timeOut = _mobTimer.WaitTime;
-    _mobTimer.SetWaitTime(timeOut / _difficultyModified);
+    float timeOut = _enemyTimer.WaitTime;
+    _enemyTimer.SetWaitTime(timeOut / _difficultyModified);
   }
 
   void EnemyDestroyed() {

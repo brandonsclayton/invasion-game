@@ -49,12 +49,12 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="enemy\Enemy.cs" />
     <Compile Include="gui\GUI.cs" />
     <Compile Include="options\Options.cs" />
     <Compile Include="options\PlayerOptions.cs" />
     <Compile Include="hud\HUD.cs" />
     <Compile Include="main\Main.cs" />
-    <Compile Include="mob\Mob.cs" />
     <Compile Include="player\Laser.cs" />
     <Compile Include="player\Player.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
