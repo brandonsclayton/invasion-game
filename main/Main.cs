@@ -177,6 +177,9 @@ public class Main : Node {
     _hud.LifeBarChange(_LEVEL_UP_HEALTH);
     float timeOut = _enemyTimer.WaitTime;
     _enemyTimer.SetWaitTime(timeOut / _difficultyModified);
+    GetEnemies().ForEach(enemy =>  enemy.Destroy());
+    GetAsteriods().ForEach(asteriod => asteriod.Destroy());
+    _gui.ShowMessage("Level: " + _level);
   }
 
   void EnemyDestroyed() {
