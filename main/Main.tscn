@@ -1,12 +1,13 @@
-[gd_scene load_steps=9 format=2]
+[gd_scene load_steps=10 format=2]
 
 [ext_resource path="res://main/Main.cs" type="Script" id=1]
 [ext_resource path="res://enemy/Enemy.tscn" type="PackedScene" id=2]
 [ext_resource path="res://player/Player.tscn" type="PackedScene" id=3]
-[ext_resource path="res://assets/sound/game-music.ogg" type="AudioStream" id=4]
-[ext_resource path="res://assets/sound/gameover.wav" type="AudioStream" id=5]
-[ext_resource path="res://hud/HUD.tscn" type="PackedScene" id=6]
-[ext_resource path="res://gui/GUI.tscn" type="PackedScene" id=7]
+[ext_resource path="res://asteroid/Asteriod.tscn" type="PackedScene" id=4]
+[ext_resource path="res://assets/sound/game-music.ogg" type="AudioStream" id=5]
+[ext_resource path="res://assets/sound/gameover.wav" type="AudioStream" id=6]
+[ext_resource path="res://hud/HUD.tscn" type="PackedScene" id=7]
+[ext_resource path="res://gui/GUI.tscn" type="PackedScene" id=8]
 
 [sub_resource type="Curve2D" id=1]
 _data = {
@@ -17,6 +18,7 @@ _data = {
 script = ExtResource( 1 )
 Enemy = ExtResource( 2 )
 Player = ExtResource( 3 )
+Asteriod = ExtResource( 4 )
 
 [node name="ColorRect" type="ColorRect" parent="."]
 margin_top = -2.25
@@ -36,23 +38,22 @@ one_shot = true
 [node name="DifficultyTimer" type="Timer" parent="."]
 wait_time = 10.0
 
-[node name="EnemyPath" type="Path2D" parent="."]
-editor/display_folded = true
+[node name="SpawnPath" type="Path2D" parent="."]
 curve = SubResource( 1 )
 __meta__ = {
 "_edit_group_": true
 }
 
-[node name="EnemySpawnLocation" type="PathFollow2D" parent="EnemyPath"]
+[node name="SpawnLocation" type="PathFollow2D" parent="SpawnPath"]
 position = Vector2( -0.248962, -1.69925 )
 rotation = 0.00524477
 
 [node name="Music" type="AudioStreamPlayer" parent="."]
-stream = ExtResource( 4 )
+stream = ExtResource( 5 )
 volume_db = -4.0
 
 [node name="DeathSound" type="AudioStreamPlayer" parent="."]
-stream = ExtResource( 5 )
+stream = ExtResource( 6 )
 
 [node name="StartPositions" type="Control" parent="."]
 editor/display_folded = true
@@ -68,7 +69,9 @@ position = Vector2( 425, 550 )
 [node name="Player2Start" type="Position2D" parent="StartPositions"]
 position = Vector2( 850, 550 )
 
-[node name="HUD" parent="." instance=ExtResource( 6 )]
+[node name="HUD" parent="." instance=ExtResource( 7 )]
 margin_bottom = 104.0
 
-[node name="GUI" parent="." instance=ExtResource( 7 )]
+[node name="GUI" parent="." instance=ExtResource( 8 )]
+
+[node name="AsteriodTimer" type="Timer" parent="."]
