@@ -42,7 +42,7 @@ public class Asteriod : RigidBody2D {
     QueueFree();
   }
 
-  void Destroy() {
+  public void Destroy() {
     Hide();
     _collisionShape.SetDeferred("disabled", true);
     QueueFree();

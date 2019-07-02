@@ -113,9 +113,9 @@ public class Main : Node {
   }
 
   void GameOver() {
-    foreach (Player player in _players) {
-      player.Hide();
-    }
+    _players.ForEach(player => player.Destroy());
+    GetEnemies().ForEach(enemy => enemy.Destroy());
+    GetAsteriods().ForEach(asteriod => asteriod.Destroy());
 
     _gamePlayAudio.Stop();
     _enemyTimer.Stop();
@@ -222,6 +222,17 @@ public class Main : Node {
     }
 
     return enemies;
+  }
+
+  List<Asteriod> GetAsteriods() {
+    List<Asteriod> asteriods = new List<Asteriod>();
+    foreach (Node node in GetChildren()) {
+      if (node is Asteriod asteriod) {
+        asteriods.Add(asteriod);
+      }
+    }
+
+    return asteriods;
   }
 
   void OnPlayerHit(Player player) {
