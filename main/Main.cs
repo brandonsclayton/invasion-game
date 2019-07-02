@@ -187,8 +187,6 @@ public class Main : Node {
   }
 
   void OnAsteriodDestroyed(BonusItem bonusItem) {
-    System.Diagnostics.Debug.Print(bonusItem.ToString());
-
     switch(bonusItem) {
       case DESTROY_ALL_ENEMIES:
         GetEnemies().ForEach(enemy => enemy.Destroy());
