@@ -28,9 +28,9 @@ font_data = ExtResource( 8 )
 [node name="GUI" type="MarginContainer"]
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_left = 100.0
+margin_left = 106.75
 margin_top = 100.0
-margin_right = -100.0
+margin_right = -93.25
 margin_bottom = -100.0
 script = ExtResource( 1 )
 
@@ -39,6 +39,7 @@ wait_time = 2.0
 one_shot = true
 
 [node name="StartScreen" type="HBoxContainer" parent="."]
+editor/display_folded = true
 margin_right = 1080.0
 margin_bottom = 760.0
 
@@ -115,6 +116,7 @@ position = Vector2( 391.5, 389.25 )
 rotation = -3.14159
 
 [node name="MessageLabelContainer" type="CenterContainer" parent="."]
+editor/display_folded = true
 margin_right = 1080.0
 margin_bottom = 760.0
 
