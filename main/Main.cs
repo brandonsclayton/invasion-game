@@ -121,6 +121,8 @@ public class Main : Node {
     _enemyTimer.Stop();
     _scoreTimer.Stop();
     _asteriodTimer.Stop();
+    _startTimer.Stop();
+    _difficultyTimer.Stop();
     _gui.ShowGameOver();
     _gameOverAudio.Play();
   }

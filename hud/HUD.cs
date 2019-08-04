@@ -32,6 +32,10 @@ public class HUD: MarginContainer {
     Show();
   }
 
+  public void Reset() {
+    NewGame();
+  }
+
   public void UpdateScore(int score) {
     _score.SetText(score.ToString());
   }

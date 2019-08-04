@@ -70,7 +70,6 @@ position = Vector2( 425, 550 )
 position = Vector2( 850, 550 )
 
 [node name="HUD" parent="." instance=ExtResource( 7 )]
-margin_bottom = 104.0
 
 [node name="GUI" parent="." instance=ExtResource( 8 )]
 

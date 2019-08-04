@@ -26,8 +26,8 @@ public class Player : Node2D {
   private Controls _controls;
   private Timer _laserTimer;
   private Dictionary<PlayerShip, Area2D> _playerShips = new Dictionary<PlayerShip, Area2D>();
+  private PlayerOptions _playerOptions;
 
-  private static int _playerNumber = 0;
   private static readonly float _FIRE_TIMEOUT = 0.2f;
   private static readonly float _ROTATION_OFFSET = -Mathf.Deg2Rad(90);
   private static readonly string _SPRITE = "Sprite";
@@ -60,9 +60,10 @@ public class Player : Node2D {
   }
 
   public void SetPlayer(PlayerOptions playerOptions) {
+    _playerOptions = playerOptions;
     SetPlayerShips();
-    _controls = new Controls(++_playerNumber);
-    _playerShip = _playerShips[playerOptions.playerShip];
+    _controls = new Controls(_playerOptions);
+    _playerShip = _playerShips[_playerOptions.playerShip];
   }
 
   public void Start(Vector2 pos) {
@@ -73,6 +74,7 @@ public class Player : Node2D {
   }
 
   public void Destroy() {
+    QueueFree();
     _playerShip.Hide();
     _playerShip.GetNode<CollisionPolygon2D>(_COLLISION).SetDeferred("disabled", true);
   }
@@ -110,8 +112,8 @@ public class Player : Node2D {
 
   void MovePlayer(float delta) {
     Vector2 movement = new Vector2(
-        Input.GetJoyAxis(_playerNumber - 1, 0),
-        Input.GetJoyAxis(_playerNumber - 1, 1));
+        Input.GetJoyAxis(_playerOptions.playerNumber - 1, 0),
+        Input.GetJoyAxis(_playerOptions.playerNumber - 1, 1));
 
     if (movement.Length() < _JOYPAD_DEADZONE) {
       movement = new Vector2(0, 0);
@@ -129,8 +131,8 @@ public class Player : Node2D {
 
   void RotatePlayer(Sprite sprite) {
     Vector2 rotate = new Vector2(
-        Input.GetJoyAxis(_playerNumber - 1, 2),
-        Input.GetJoyAxis(_playerNumber - 1, 3));
+        Input.GetJoyAxis(_playerOptions.playerNumber - 1, 2),
+        Input.GetJoyAxis(_playerOptions.playerNumber - 1, 3));
 
     if (rotate.Length() < _JOYPAD_DEADZONE) {
       rotate = new Vector2(0, 0);
@@ -156,9 +158,8 @@ public class Player : Node2D {
   class Controls {
     public string FIRE;
 
-    public Controls(int player) {
-      string num = player.ToString();
-      FIRE = $"player{num}_fire";
+    public Controls(PlayerOptions playerOptions) {
+      FIRE = $"player{playerOptions.playerNumber}_fire";
     }
 
   }
