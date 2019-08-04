@@ -13,7 +13,7 @@ public class Main : Node {
   public PackedScene Player;
 
   [Export]
-  public PackedScene Asteriod;
+  public PackedScene Asteroid;
 
   private int _score;
   private int _level;
@@ -29,7 +29,7 @@ public class Main : Node {
   private Timer _enemyTimer;
   private Timer _scoreTimer;
   private Timer _difficultyTimer;
-  private Timer _asteriodTimer;
+  private Timer _asteroidTimer;
   private Position2D _player1StartPosition;
   private Position2D _player2StartPosition;
   private Position2D _singlePlayerStartPosition;
@@ -48,7 +48,7 @@ public class Main : Node {
     _startTimer = GetNode<Timer>("StartTimer");
     _enemyTimer = GetNode<Timer>("EnemyTimer");
     _scoreTimer = GetNode<Timer>("ScoreTimer");
-    _asteriodTimer = GetNode<Timer>("AsteriodTimer");
+    _asteroidTimer = GetNode<Timer>("AsteroidTimer");
     _difficultyTimer = GetNode<Timer>("DifficultyTimer");
     _spawnLocation = GetNode<PathFollow2D>("SpawnPath/SpawnLocation");
     _singlePlayerStartPosition = GetNode<Position2D>("StartPositions/SinglePlayerStart");
@@ -60,7 +60,7 @@ public class Main : Node {
     _startTimer.Connect("timeout", this, nameof(OnStartTimerTimeout));
     _enemyTimer.Connect("timeout", this, nameof(OnEnemyTimerTimeout));
     _scoreTimer.Connect("timeout", this, nameof(OnScoreTimerTimeout));
-    _asteriodTimer.Connect("timeout", this, nameof(OnAsteriodTimerTimeout));
+    _asteroidTimer.Connect("timeout", this, nameof(OnAsteroidTimerTimeout));
     _difficultyTimer.Connect("timeout", this, nameof(OnDifficultyTimerTimeout));
 
     _gui.Connect("StartGame", this, nameof(NewGame));
@@ -120,35 +120,36 @@ public class Main : Node {
     _gamePlayAudio.Stop();
     _enemyTimer.Stop();
     _scoreTimer.Stop();
-    _asteriodTimer.Stop();
+    _asteroidTimer.Stop();
     _startTimer.Stop();
     _difficultyTimer.Stop();
     _gui.ShowGameOver();
     _gameOverAudio.Play();
+    _hud.Reset();
   }
 
   void OnStartTimerTimeout() {
     _enemyTimer.Start();
     _scoreTimer.Start();
     _difficultyTimer.Start();
-    _asteriodTimer.Start();
+    _asteroidTimer.Start();
   }
 
   void OnScoreTimerTimeout() {
     _hud.UpdateScore(++_score);
   }
 
-  void OnAsteriodTimerTimeout() {
-    Asteriod asteriod = (Asteriod)Asteriod.Instance();
-    SpawnItem(asteriod, asteriod.MIN_SPEED, asteriod.MAX_SPEED);
-    asteriod.Connect("AsteriodDestroyed", this, nameof(OnAsteriodDestroyed));
-    _asteriodTimer.SetWaitTime(RandRange(
-        asteriod.MIN_SPAWN_TIME / (_difficultyModified * _level),
-        asteriod.MAX_SPAWN_TIME / (_difficultyModified * _level)));
+  void OnAsteroidTimerTimeout() {
+    Asteroid asteroid = (Asteroid)Asteroid.Instance();
+    SpawnItem(asteroid, asteroid.MIN_SPEED, asteroid.MAX_SPEED);
+    asteroid.Connect("AsteriodDestroyed", this, nameof(OnAsteriodDestroyed));
+    _asteroidTimer.SetWaitTime(RandRange(
+        asteroid.MIN_SPAWN_TIME / (_difficultyModified * _level),
+        asteroid.MAX_SPAWN_TIME / (_difficultyModified * _level)));
   }
 
   void OnEnemyTimerTimeout() {
-    Enemy enemy = (Enemy)Enemy.Instance();
+    Enemy enemy = (Enemy) Enemy.Instance();
     SpawnItem(enemy, enemy.MinSpeed, enemy.MaxSpeed);
     enemy.Connect("EnemyDestroyed", this, nameof(EnemyDestroyed));
     _gui.Connect("StartGame", enemy, "OnStartGame");
@@ -227,10 +228,10 @@ public class Main : Node {
     return enemies;
   }
 
-  List<Asteriod> GetAsteriods() {
-    List<Asteriod> asteriods = new List<Asteriod>();
+  List<Asteroid> GetAsteriods() {
+    List<Asteroid> asteriods = new List<Asteroid>();
     foreach (Node node in GetChildren()) {
-      if (node is Asteriod asteriod) {
+      if (node is Asteroid asteriod) {
         asteriods.Add(asteriod);
       }
     }

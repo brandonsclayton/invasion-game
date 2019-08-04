@@ -3,7 +3,7 @@
 [ext_resource path="res://main/Main.cs" type="Script" id=1]
 [ext_resource path="res://enemy/Enemy.tscn" type="PackedScene" id=2]
 [ext_resource path="res://player/Player.tscn" type="PackedScene" id=3]
-[ext_resource path="res://asteroid/Asteriod.tscn" type="PackedScene" id=4]
+[ext_resource path="res://asteroid/Asteroid.tscn" type="PackedScene" id=4]
 [ext_resource path="res://assets/sound/game-music.ogg" type="AudioStream" id=5]
 [ext_resource path="res://assets/sound/gameover.wav" type="AudioStream" id=6]
 [ext_resource path="res://hud/HUD.tscn" type="PackedScene" id=7]
@@ -18,7 +18,7 @@ _data = {
 script = ExtResource( 1 )
 Enemy = ExtResource( 2 )
 Player = ExtResource( 3 )
-Asteriod = ExtResource( 4 )
+Asteroid = ExtResource( 4 )
 
 [node name="ColorRect" type="ColorRect" parent="."]
 margin_top = -2.25
@@ -73,4 +73,4 @@ position = Vector2( 850, 550 )
 
 [node name="GUI" parent="." instance=ExtResource( 8 )]
 
-[node name="AsteriodTimer" type="Timer" parent="."]
+[node name="AsteroidTimer" type="Timer" parent="."]

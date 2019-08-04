@@ -49,7 +49,7 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="asteroid\Asteriod.cs" />
+    <Compile Include="asteroid\Asteroid.cs" />
     <Compile Include="asteroid\Bonus.cs" />
     <Compile Include="enemy\Enemy.cs" />
     <Compile Include="gui\GUI.cs" />

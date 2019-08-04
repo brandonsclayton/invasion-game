@@ -1,7 +1,7 @@
 using Godot;
 using System;
 
-public class Asteriod : RigidBody2D {
+public class Asteroid : RigidBody2D {
 
   [Export]
   public readonly int MIN_SPEED = 150;
@@ -19,8 +19,17 @@ public class Asteriod : RigidBody2D {
   public delegate void AsteriodDestroyed();
 
   private CollisionPolygon2D _collisionShape;
+  private AnimatedSprite _destroyed;
+  private Sprite _sprite;
+  private Label _label;
 
   public override void _Ready() {
+    _label = GetNode<Label>("Label");
+    _destroyed = GetNode<AnimatedSprite>("Destroyed");
+    _destroyed.Animation = "destroy";
+    _sprite = GetNode<Sprite>("Sprite");
+    _destroyed.Hide();
+    _destroyed.Connect("animation_finished", this, nameof(OnAsteroidDestroyed));
     SetContactMonitor(true);
     SetMaxContactsReported(1);
 
@@ -43,6 +52,13 @@ public class Asteriod : RigidBody2D {
   }
 
   public void Destroy() {
+    _sprite.Hide();
+    _label.Hide();
+    _destroyed.Show();
+    _destroyed.Play();
+  }
+
+  void OnAsteroidDestroyed() {
     Hide();
     _collisionShape.SetDeferred("disabled", true);
     QueueFree();

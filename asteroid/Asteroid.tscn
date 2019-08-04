@@ -1,0 +1,53 @@
+[gd_scene load_steps=12 format=2]
+
+[ext_resource path="res://asteroid/Asteroid.cs" type="Script" id=1]
+[ext_resource path="res://assets/art/asteroid/asteroid.png" type="Texture" id=2]
+[ext_resource path="res://assets/fonts/Comfortaa-Bold.ttf" type="DynamicFontData" id=3]
+[ext_resource path="res://assets/art/asteroid/asteroid-damage-1.png" type="Texture" id=4]
+[ext_resource path="res://assets/art/asteroid/asteroid-damage-2.png" type="Texture" id=5]
+[ext_resource path="res://assets/art/asteroid/asteroid-damage-3.png" type="Texture" id=6]
+[ext_resource path="res://assets/art/asteroid/asteroid-damage-4.png" type="Texture" id=7]
+[ext_resource path="res://assets/art/asteroid/asteroid-damage-5.png" type="Texture" id=8]
+[ext_resource path="res://assets/art/asteroid/asteroid-damage-6.png" type="Texture" id=9]
+
+[sub_resource type="DynamicFont" id=1]
+size = 40
+font_data = ExtResource( 3 )
+
+[sub_resource type="SpriteFrames" id=2]
+animations = [ {
+"frames": [ ExtResource( 4 ), ExtResource( 5 ), ExtResource( 6 ), ExtResource( 7 ), ExtResource( 8 ), ExtResource( 9 ) ],
+"loop": false,
+"name": "destroy",
+"speed": 10.0
+} ]
+
+[node name="Asteriod" type="RigidBody2D"]
+mass = 10.0
+gravity_scale = 0.0
+script = ExtResource( 1 )
+
+[node name="Sprite" type="Sprite" parent="."]
+scale = Vector2( 0.1, 0.1 )
+texture = ExtResource( 2 )
+
+[node name="Visibility" type="VisibilityNotifier2D" parent="."]
+
+[node name="Label" type="Label" parent="."]
+margin_left = -13.3333
+margin_top = -24.8889
+margin_right = 26.6667
+margin_bottom = 21.1111
+custom_fonts/font = SubResource( 1 )
+text = "?"
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
+scale = Vector2( 0.1, 0.1 )
+polygon = PoolVector2Array( -17, -255.4, 22, -242.4, 22, -241.1, 61.5, -218, 63.4, -218, 93.4, -204, 97.2, -204, 108, -202.4, 126.7, -208, 129.3, -208, 138, -205.5, 138, -204.1, 154, -194.1, 154, -192.7, 166.9, -178, 168.6, -178, 203, -156.1, 203, -154.8, 219, -138.8, 219, -136.7, 231, -120.7, 231, -118.6, 244, -94.5, 244, -91.4, 255, -60.3, 255, -55, 256, 32, 254.5, 32, 250.5, 46.4, 256, 58.6, 256, 81, 254.1, 81, 240.2, 106, 238.7, 106, 219.8, 123, 198.7, 123, 189.8, 131, 187.5, 131, 166.5, 143, 163.4, 143, 58.4, 185, 55.3, 185, -4.7, 203, -11.9, 203, -52, 205.1, -52, 203.7, -96, 194.6, -96, 193.3, -138, 174.3, -138, 173, -173, 148, -173, 146.8, -196, 124.9, -196, 122.7, -223, 88.7, -223, 86.5, -240, 56.5, -240, 53.4, -253, 20.4, -253, 16, -256, 5.39999, -256, -67.3, -250.6, -93, -249.4, -93, -240, -117.4, -240, -118.4, -252, -136.4, -252, -144, -250, -144, -213, -190, -211.8, -190, -182.8, -220, -180.3, -220, -169, -223.8, -169, -221.7, -161.6, -220.4, -120.6, -246, -117.4, -246, -99.4, -254, -95.1, -254, -87, -256, -17, -256 )
+
+[node name="Destroyed" type="AnimatedSprite" parent="."]
+light_mask = 0
+scale = Vector2( 0.1, 0.1 )
+frames = SubResource( 2 )
+animation = "destroy"
+frame = 4

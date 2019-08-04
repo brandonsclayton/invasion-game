@@ -1,5 +1,6 @@
 using Godot;
 using System;
+using System.Threading.Tasks;
 
 public class GUI: MarginContainer {
 
@@ -12,13 +13,11 @@ public class GUI: MarginContainer {
   private Label _messageLabel;
   private Button _1PlayerButton;
   private Button _2PlayerButton;
-  private HUD _hud;
 
   public override void _Ready() {
     _startScreen = GetNode<HBoxContainer>("StartScreen");
     _1PlayerButton = GetNode<Button>("StartScreen/VBoxContainer/PlayerOptions/1PlayerButton");
     _2PlayerButton = GetNode<Button>("StartScreen/VBoxContainer/PlayerOptions/2PlayerButton");
-    _hud = GetNode<HUD>("HUD");
 
     _1PlayerButton.GrabFocus();
     _messageLabel = GetNode<Label>("MessageLabelContainer/MessageLabel");
@@ -46,13 +45,12 @@ public class GUI: MarginContainer {
     GetNode<Timer>("MessageTimer").Start();
   }
 
-  async public void ShowGameOver() {
+  public async Task ShowGameOver() {
     ShowMessage("Game Over");
     Timer messageTimer = GetNode<Timer>("MessageTimer");
     await ToSignal(messageTimer, "timeout");
     _startScreen.Show();
     _1PlayerButton.GrabFocus();
-    _hud.Reset();
   }
 
   public void OnStartButtonPressed(int numberOfPlayers) {

@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/asteriod.png-75366139560e9a4f78517830c13487ee.stex"
+path="res://.import/asteroid-damage-3.png-c9f8bf0a51a2c8681f6eeeef5528faaa.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/art/asteriod/asteriod.png"
-dest_files=[ "res://.import/asteriod.png-75366139560e9a4f78517830c13487ee.stex" ]
+source_file="res://assets/art/asteroid/asteroid-damage-3.png"
+dest_files=[ "res://.import/asteroid-damage-3.png-c9f8bf0a51a2c8681f6eeeef5528faaa.stex" ]
 
 [params]
 
